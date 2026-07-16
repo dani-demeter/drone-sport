@@ -15,6 +15,7 @@ namespace DroneSport.Input
 
         private DroneControlsActions _actions;
         private bool _isArmed;
+        private bool _selfRightRequested;
 
         public bool IsArmed => _isArmed || _actions.Drone.ArmSwitch.IsPressed();
 
@@ -27,17 +28,24 @@ namespace DroneSport.Input
         {
             _actions.Drone.Enable();
             _actions.Drone.Arm.performed += OnArmPerformed;
+            _actions.Drone.SelfRight.performed += OnSelfRightPerformed;
         }
 
         public override void OnStopAuthority()
         {
             _actions.Drone.Arm.performed -= OnArmPerformed;
+            _actions.Drone.SelfRight.performed -= OnSelfRightPerformed;
             _actions.Drone.Disable();
         }
 
         private void OnArmPerformed(InputAction.CallbackContext context)
         {
             _isArmed = !_isArmed;
+        }
+
+        private void OnSelfRightPerformed(InputAction.CallbackContext context)
+        {
+            _selfRightRequested = true;
         }
 
         public DroneInputChannels ReadChannels()
@@ -47,7 +55,10 @@ namespace DroneSport.Input
             float pitch = DroneFlightMath.ShapeExpo(_actions.Drone.Pitch.ReadValue<float>(), pitchExpo);
             float yaw = DroneFlightMath.ShapeExpo(_actions.Drone.Yaw.ReadValue<float>(), yawExpo);
 
-            return new DroneInputChannels(throttle, roll, pitch, yaw, IsArmed);
+            bool selfRight = _selfRightRequested;
+            _selfRightRequested = false;
+
+            return new DroneInputChannels(throttle, roll, pitch, yaw, IsArmed, selfRight);
         }
     }
 }

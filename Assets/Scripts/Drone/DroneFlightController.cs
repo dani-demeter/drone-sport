@@ -24,6 +24,9 @@ namespace DroneSport.Drone
         [SerializeField] private DroneDebugHud debugHud;
         [SerializeField] private Camera playerCamera;
 
+        [Header("Self-Right")]
+        [SerializeField] private float selfRightLiftMeters = 0.15f;
+
         private Rigidbody _rigidbody;
         private IDroneInputSource _inputSource;
 
@@ -87,6 +90,11 @@ namespace DroneSport.Drone
         {
             IsArmed = channels.IsArmed;
 
+            if (channels.SelfRight)
+            {
+                SelfRight();
+            }
+
             if (!IsArmed)
             {
                 return;
@@ -111,6 +119,16 @@ namespace DroneSport.Drone
                 Mathf.Deg2Rad * maxAngularAccelDegPerSec2);
 
             _rigidbody.AddRelativeTorque(angularAccel, ForceMode.Acceleration);
+        }
+
+        // Keeps current yaw heading (don't spin the pilot around), zeroes pitch/roll,
+        // and lifts slightly so the frame doesn't stay clipped into whatever it landed on.
+        private void SelfRight()
+        {
+            _rigidbody.angularVelocity = Vector3.zero;
+            _rigidbody.linearVelocity = Vector3.zero;
+            _rigidbody.MoveRotation(Quaternion.Euler(0f, transform.eulerAngles.y, 0f));
+            _rigidbody.MovePosition(_rigidbody.position + Vector3.up * selfRightLiftMeters);
         }
     }
 }

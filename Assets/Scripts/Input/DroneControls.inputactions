@@ -59,6 +59,15 @@
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": true
+                },
+                {
+                    "name": "SelfRight",
+                    "type": "Button",
+                    "id": "a2c1d8e4-6f3b-4a15-9c2d-7e8f5b3a1c90",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "Press",
+                    "initialStateCheck": false
                 }
             ],
             "bindings": [
@@ -312,6 +321,39 @@
                     "processors": "",
                     "groups": "Keyboard",
                     "action": "Arm",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "b3d2e9f5-704c-4b26-8d3e-8f9a6c4b2d01",
+                    "path": "<Keyboard>/r",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Keyboard",
+                    "action": "SelfRight",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "c4e3fa06-815d-4c37-9e4f-90ab7d5c3e12",
+                    "path": "<Gamepad>/buttonNorth",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Gamepad",
+                    "action": "SelfRight",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "43904206-c152-407b-93ab-884aea491c40",
+                    "path": "<HID::OpenTX Radiomaster Zorro Joystick>/button2",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "SelfRight",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

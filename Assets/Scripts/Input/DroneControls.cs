@@ -145,6 +145,15 @@ public partial class @DroneControlsActions: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": true
+                },
+                {
+                    ""name"": ""SelfRight"",
+                    ""type"": ""Button"",
+                    ""id"": ""a2c1d8e4-6f3b-4a15-9c2d-7e8f5b3a1c90"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": ""Press"",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -400,6 +409,39 @@ public partial class @DroneControlsActions: IInputActionCollection2, IDisposable
                     ""action"": ""Arm"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""b3d2e9f5-704c-4b26-8d3e-8f9a6c4b2d01"",
+                    ""path"": ""<Keyboard>/r"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""Keyboard"",
+                    ""action"": ""SelfRight"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""c4e3fa06-815d-4c37-9e4f-90ab7d5c3e12"",
+                    ""path"": ""<Gamepad>/buttonNorth"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""Gamepad"",
+                    ""action"": ""SelfRight"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""43904206-c152-407b-93ab-884aea491c40"",
+                    ""path"": ""<HID::OpenTX Radiomaster Zorro Joystick>/button2"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""SelfRight"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -437,6 +479,7 @@ public partial class @DroneControlsActions: IInputActionCollection2, IDisposable
         m_Drone_Yaw = m_Drone.FindAction("Yaw", throwIfNotFound: true);
         m_Drone_Arm = m_Drone.FindAction("Arm", throwIfNotFound: true);
         m_Drone_ArmSwitch = m_Drone.FindAction("ArmSwitch", throwIfNotFound: true);
+        m_Drone_SelfRight = m_Drone.FindAction("SelfRight", throwIfNotFound: true);
     }
 
     ~@DroneControlsActions()
@@ -523,6 +566,7 @@ public partial class @DroneControlsActions: IInputActionCollection2, IDisposable
     private readonly InputAction m_Drone_Yaw;
     private readonly InputAction m_Drone_Arm;
     private readonly InputAction m_Drone_ArmSwitch;
+    private readonly InputAction m_Drone_SelfRight;
     /// <summary>
     /// Provides access to input actions defined in input action map "Drone".
     /// </summary>
@@ -558,6 +602,10 @@ public partial class @DroneControlsActions: IInputActionCollection2, IDisposable
         /// Provides access to the underlying input action "Drone/ArmSwitch".
         /// </summary>
         public InputAction @ArmSwitch => m_Wrapper.m_Drone_ArmSwitch;
+        /// <summary>
+        /// Provides access to the underlying input action "Drone/SelfRight".
+        /// </summary>
+        public InputAction @SelfRight => m_Wrapper.m_Drone_SelfRight;
         /// <summary>
         /// Provides access to the underlying input action map instance.
         /// </summary>
@@ -602,6 +650,9 @@ public partial class @DroneControlsActions: IInputActionCollection2, IDisposable
             @ArmSwitch.started += instance.OnArmSwitch;
             @ArmSwitch.performed += instance.OnArmSwitch;
             @ArmSwitch.canceled += instance.OnArmSwitch;
+            @SelfRight.started += instance.OnSelfRight;
+            @SelfRight.performed += instance.OnSelfRight;
+            @SelfRight.canceled += instance.OnSelfRight;
         }
 
         /// <summary>
@@ -631,6 +682,9 @@ public partial class @DroneControlsActions: IInputActionCollection2, IDisposable
             @ArmSwitch.started -= instance.OnArmSwitch;
             @ArmSwitch.performed -= instance.OnArmSwitch;
             @ArmSwitch.canceled -= instance.OnArmSwitch;
+            @SelfRight.started -= instance.OnSelfRight;
+            @SelfRight.performed -= instance.OnSelfRight;
+            @SelfRight.canceled -= instance.OnSelfRight;
         }
 
         /// <summary>
@@ -739,5 +793,12 @@ public partial class @DroneControlsActions: IInputActionCollection2, IDisposable
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
         void OnArmSwitch(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "SelfRight" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnSelfRight(InputAction.CallbackContext context);
     }
 }
