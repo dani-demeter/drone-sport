@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using DroneSport.Gameplay;
 using Mirror;
 using UnityEngine;
@@ -7,6 +8,12 @@ namespace DroneSport.Networking
     public class DroneSportNetworkManager : NetworkRoomManager
     {
         [SerializeField] private float countdownSeconds = 5f;
+
+        [Header("Maps")]
+        [Tooltip("Maps the host can pick between in the lobby. Falls back to Gameplay Scene above if empty.")]
+        [SerializeField] private MapOption[] availableMaps;
+
+        public IReadOnlyList<MapOption> AvailableMaps => availableMaps;
 
         public override bool OnRoomServerSceneLoadedForPlayer(NetworkConnectionToClient conn, GameObject roomPlayer, GameObject gamePlayer)
         {
@@ -47,12 +54,27 @@ namespace DroneSport.Networking
 
         public void ServerCompleteCountdownAndStartMatch()
         {
+            GameplayScene = ResolveSelectedMapScenePath();
             ServerChangeScene(GameplayScene);
         }
 
         public void ServerReturnToLobby()
         {
             ServerChangeScene(RoomScene);
+        }
+
+        private string ResolveSelectedMapScenePath()
+        {
+            if (availableMaps == null || availableMaps.Length == 0)
+            {
+                return GameplayScene;
+            }
+
+            int index = MapSelection.Instance != null
+                ? Mathf.Clamp(MapSelection.Instance.SelectedMapIndex, 0, availableMaps.Length - 1)
+                : 0;
+
+            return availableMaps[index].sceneName;
         }
     }
 }

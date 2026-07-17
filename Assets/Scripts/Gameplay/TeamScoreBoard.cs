@@ -33,5 +33,12 @@ namespace DroneSport.Gameplay
             _scores[scoringTeam] += awarded;
             return awarded;
         }
+
+        public int AwardPointsWithoutConsumingMultiplier(TeamId scoringTeam, int basePoints)
+        {
+            int awarded = _multiplierControlledBy == scoringTeam ? basePoints * 2 : basePoints;
+            _scores[scoringTeam] += awarded;
+            return awarded;
+        }
     }
 }

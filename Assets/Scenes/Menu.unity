@@ -1881,6 +1881,11 @@ MonoBehaviour:
   _allPlayersReady: 0
   clientIndex: 0
   countdownSeconds: 5
+  availableMaps:
+  - displayName: Default
+    sceneName: Assets/Scenes/Game.unity
+  - displayName: Control
+    sceneName: Assets/Scenes/Control Map.unity
 --- !u!4 &1700289285
 Transform:
   m_ObjectHideFlags: 0

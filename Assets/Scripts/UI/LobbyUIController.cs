@@ -25,6 +25,9 @@ namespace DroneSport.UI
         [Header("Countdown")]
         [SerializeField] private TMP_Text countdownText;
 
+        [Header("Map Selection")]
+        [SerializeField] private TMP_Dropdown mapDropdown;
+
         private readonly Dictionary<DroneSportRoomPlayer, RosterRow> _rows = new();
 
         private void Awake()
@@ -32,6 +35,8 @@ namespace DroneSport.UI
             teamAButton.onClick.AddListener(() => RequestTeam(TeamId.A));
             teamBButton.onClick.AddListener(() => RequestTeam(TeamId.B));
             readyButton.onClick.AddListener(OnReadyClicked);
+            mapDropdown.onValueChanged.AddListener(OnMapSelected);
+            PopulateMapDropdown();
         }
 
         private void Update()
@@ -43,6 +48,30 @@ namespace DroneSport.UI
 
             UpdateRoster();
             UpdateCountdown();
+            UpdateMapSelection();
+        }
+
+        private void PopulateMapDropdown()
+        {
+            List<string> displayNames = GetRoomManager().AvailableMaps.Select(map => map.displayName).ToList();
+            mapDropdown.ClearOptions();
+            mapDropdown.AddOptions(displayNames);
+        }
+
+        private void UpdateMapSelection()
+        {
+            mapDropdown.interactable = NetworkServer.active;
+
+            int selectedIndex = MapSelection.Instance != null ? MapSelection.Instance.SelectedMapIndex : 0;
+            if (mapDropdown.value != selectedIndex)
+            {
+                mapDropdown.SetValueWithoutNotify(selectedIndex);
+            }
+        }
+
+        private static void OnMapSelected(int index)
+        {
+            GetLocalRoomPlayer()?.CmdSelectMap(index);
         }
 
         private void UpdateCountdown()

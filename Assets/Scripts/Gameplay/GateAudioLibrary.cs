@@ -20,6 +20,7 @@ namespace DroneSport.Gameplay
         [SerializeField] private AllyOpponentClips capturedClips;
         [SerializeField] private AllyOpponentClips deniedClips;
         [SerializeField] private AllyOpponentClips multiplierCapturedClips;
+        [SerializeField] private AllyOpponentClips controlGateCapturedClips;
 
         private void Awake()
         {
@@ -30,6 +31,7 @@ namespace DroneSport.Gameplay
         public void PlayCaptured(TeamId team, Vector3 position) => Play(capturedClips, team, position);
         public void PlayDenied(TeamId team, Vector3 position) => Play(deniedClips, team, position);
         public void PlayMultiplierCaptured(TeamId team, Vector3 position) => Play(multiplierCapturedClips, team, position);
+        public void PlayControlGateCaptured(TeamId team, Vector3 position) => Play(controlGateCapturedClips, team, position);
 
         private static void Play(AllyOpponentClips clips, TeamId team, Vector3 position)
         {

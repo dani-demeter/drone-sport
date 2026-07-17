@@ -21298,6 +21298,9 @@ MonoBehaviour:
   multiplierCapturedClips:
     ally: {fileID: 8300000, guid: 2fd9ed7ad63ae524494546ff3d690d90, type: 3}
     opponent: {fileID: 8300000, guid: de48971e5b22ab441aab31bbeba18e3f, type: 3}
+  controlGateCapturedClips:
+    ally: {fileID: 0}
+    opponent: {fileID: 0}
 --- !u!4 &358901887
 Transform:
   m_ObjectHideFlags: 0

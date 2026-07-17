@@ -40,6 +40,16 @@ namespace DroneSport.Gameplay
             return awarded;
         }
 
+        public int AwardPointsWithoutConsumingMultiplier(TeamId scoringTeam, int basePoints)
+        {
+            int awarded = _scoreBoard.AwardPointsWithoutConsumingMultiplier(scoringTeam, basePoints);
+
+            teamAScore = _scoreBoard.GetScore(TeamId.A);
+            teamBScore = _scoreBoard.GetScore(TeamId.B);
+
+            return awarded;
+        }
+
         public void SetMultiplierControl(TeamId team)
         {
             _scoreBoard.SetMultiplierControl(team);

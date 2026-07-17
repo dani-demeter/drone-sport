@@ -26,6 +26,17 @@ namespace DroneSport.Networking
         }
 
         [Command]
+        public void CmdSelectMap(int mapIndex)
+        {
+            if (connectionToClient != NetworkServer.localConnection)
+            {
+                return;
+            }
+
+            MapSelection.Instance?.ServerSetSelectedMap(mapIndex);
+        }
+
+        [Command]
         private void CmdSetPlayerName(string newName)
         {
             newName = newName?.Trim();

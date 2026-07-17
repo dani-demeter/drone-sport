@@ -81,5 +81,47 @@ namespace DroneSport.Tests.EditMode
 
             Assert.AreEqual(TeamId.A, board.MultiplierControlledBy);
         }
+
+        [Test]
+        public void AwardPointsWithoutConsumingMultiplier_ScoringTeamControlsMultiplier_DoublesPointsButKeepsControl()
+        {
+            var board = new TeamScoreBoard();
+            board.SetMultiplierControl(TeamId.A);
+
+            int awarded = board.AwardPointsWithoutConsumingMultiplier(TeamId.A, 5);
+
+            Assert.AreEqual(10, awarded);
+            Assert.AreEqual(10, board.GetScore(TeamId.A));
+            Assert.AreEqual(TeamId.A, board.MultiplierControlledBy);
+        }
+
+        [Test]
+        public void AwardPointsWithoutConsumingMultiplier_RepeatedCalls_DoubleEveryTimeUntilExplicitlyConsumed()
+        {
+            var board = new TeamScoreBoard();
+            board.SetMultiplierControl(TeamId.A);
+
+            board.AwardPointsWithoutConsumingMultiplier(TeamId.A, 5);
+            int secondAward = board.AwardPointsWithoutConsumingMultiplier(TeamId.A, 5);
+
+            Assert.AreEqual(10, secondAward);
+            Assert.AreEqual(20, board.GetScore(TeamId.A));
+            Assert.AreEqual(TeamId.A, board.MultiplierControlledBy);
+
+            int consumedAward = board.AwardPoints(TeamId.A, 5);
+            Assert.AreEqual(10, consumedAward);
+            Assert.IsNull(board.MultiplierControlledBy);
+        }
+
+        [Test]
+        public void AwardPointsWithoutConsumingMultiplier_NoMultiplierControl_AwardsBasePointsUnchanged()
+        {
+            var board = new TeamScoreBoard();
+
+            int awarded = board.AwardPointsWithoutConsumingMultiplier(TeamId.A, 5);
+
+            Assert.AreEqual(5, awarded);
+            Assert.AreEqual(5, board.GetScore(TeamId.A));
+        }
     }
 }
