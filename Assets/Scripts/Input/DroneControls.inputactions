@@ -85,7 +85,7 @@
                 {
                     "name": "Keyboard",
                     "id": "cb144424-aeb1-426e-a5cf-d06d508a51c5",
-                    "path": "Axis(minValue=0,maxValue=1)",
+                    "path": "Axis",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
@@ -354,6 +354,56 @@
                     "processors": "",
                     "groups": "",
                     "action": "SelfRight",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
+        },
+        {
+            "name": "Lobby",
+            "id": "ae70e674-0406-4268-8ccd-6dc2f14c9d25",
+            "actions": [
+                {
+                    "name": "ToggleReady",
+                    "type": "Button",
+                    "id": "165428c3-9d3a-4a8f-80b2-1d26e24a8b52",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "Press",
+                    "initialStateCheck": false
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "d60e94a1-de80-4310-adf1-affbd00c706e",
+                    "path": "<Gamepad>/buttonSouth",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Gamepad",
+                    "action": "ToggleReady",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "9613307a-7176-4154-8916-20d6f3592ea1",
+                    "path": "<Joystick>/trigger",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "ToggleReady",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "d4a5fc77-0307-4463-8fa9-15a579b65870",
+                    "path": "<Keyboard>/space",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Keyboard",
+                    "action": "ToggleReady",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

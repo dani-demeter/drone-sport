@@ -1693,5 +1693,4 @@ MonoBehaviour:
   scoreManager: {fileID: 0}
   matchManager: {fileID: 0}
   gateRenderers:
-  - {fileID: 0}
-  - {fileID: 0}
+  - {fileID: 8410484841600272556}

@@ -27,11 +27,21 @@ namespace DroneSport.Drone
         [Header("Self-Right")]
         [SerializeField] private float selfRightLiftMeters = 0.15f;
 
+        // Guards against a stale/garbage first throttle read right after arming
+        // (e.g. a controller that hasn't settled yet) - real flight controllers
+        // use the same interlock, refusing motor output until the pilot proves
+        // throttle is actually down.
+        [Header("Throttle Safety")]
+        [SerializeField, Range(0f, 0.5f)] private float armThrottleSafetyThreshold = 0.05f;
+
         private Rigidbody _rigidbody;
         private IDroneInputSource _inputSource;
+        private bool _throttleIsSafe;
 
         public bool IsArmed { get; private set; }
         public float HoverThrottle01 => 1f / thrustToWeightRatio;
+        public float LastThrottle01 { get; private set; }
+        public bool ThrottleIsSafe => _throttleIsSafe;
 
         public Vector3 LocalAngularVelocityDegPerSec =>
             transform.InverseTransformDirection(_rigidbody.angularVelocity) * Mathf.Rad2Deg;
@@ -88,7 +98,14 @@ namespace DroneSport.Drone
 
         public void ApplyChannels(DroneInputChannels channels)
         {
+            bool wasArmed = IsArmed;
             IsArmed = channels.IsArmed;
+            LastThrottle01 = channels.Throttle;
+
+            if (IsArmed && !wasArmed)
+            {
+                _throttleIsSafe = false;
+            }
 
             if (channels.SelfRight)
             {
@@ -98,6 +115,16 @@ namespace DroneSport.Drone
             if (!IsArmed)
             {
                 return;
+            }
+
+            if (!_throttleIsSafe)
+            {
+                if (channels.Throttle > armThrottleSafetyThreshold)
+                {
+                    return;
+                }
+
+                _throttleIsSafe = true;
             }
 
             float thrustForce = DroneFlightMath.ComputeThrustForce(

@@ -5,6 +5,7 @@
         "DroneSport.Runtime",
         "Mirror",
         "Mirror.Components",
+        "Unity.InputSystem",
         "Unity.TextMeshPro",
         "UnityEngine.UI"
     ],

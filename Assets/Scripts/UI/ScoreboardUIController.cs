@@ -32,7 +32,7 @@ namespace DroneSport.UI
             switch (matchManager.Phase)
             {
                 case MatchPhase.Ended:
-                    return matchManager.Winner.HasValue ? $"Team {matchManager.Winner} Wins" : "Draw";
+                    return "GAME OVER";
                 case MatchPhase.Overtime:
                     return "OVERTIME";
                 default:

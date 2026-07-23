@@ -169,7 +169,6 @@ MonoBehaviour:
   syncInterval: 0
   droneTeam: {fileID: 232086723266450537}
   trail: {fileID: 7039851511997843686}
-  scoreManager: {fileID: 0}
   hueJitterRange: 0.06
 --- !u!1 &8711407927438738790
 GameObject:
@@ -303,6 +302,7 @@ MonoBehaviour:
   maxAngularAccelDegPerSec2: 10000
   debugHud: {fileID: 4089744327771134284}
   playerCamera: {fileID: 4444398920497805837}
+  selfRightLiftMeters: 0.15
 --- !u!114 &4089744327771134284
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -410,7 +410,7 @@ Transform:
   m_GameObject: {fileID: 8873136521017884379}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0.9659259, z: 0.258819, w: 0}
-  m_LocalPosition: {x: -3.371467e-14, y: 0.055, z: -0.0308}
+  m_LocalPosition: {x: -3.371467e-14, y: 0.055, z: -0.06}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []

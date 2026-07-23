@@ -5,6 +5,7 @@ using DroneSport.Networking;
 using Mirror;
 using TMPro;
 using UnityEngine;
+using UnityEngine.InputSystem;
 using UnityEngine.UI;
 
 namespace DroneSport.UI
@@ -15,6 +16,7 @@ namespace DroneSport.UI
         [SerializeField] private Button teamBButton;
         [SerializeField] private Button readyButton;
         [SerializeField] private TMP_Text readyButtonText;
+        [SerializeField] private Button exitLobbyButton;
 
         [Header("Roster")]
         [SerializeField] private Transform rosterContainer;
@@ -29,14 +31,40 @@ namespace DroneSport.UI
         [SerializeField] private TMP_Dropdown mapDropdown;
 
         private readonly Dictionary<DroneSportRoomPlayer, RosterRow> _rows = new();
+        private DroneControlsActions _actions;
 
         private void Awake()
         {
             teamAButton.onClick.AddListener(() => RequestTeam(TeamId.A));
             teamBButton.onClick.AddListener(() => RequestTeam(TeamId.B));
             readyButton.onClick.AddListener(OnReadyClicked);
+            exitLobbyButton.onClick.AddListener(OnExitLobbyClicked);
             mapDropdown.onValueChanged.AddListener(OnMapSelected);
             PopulateMapDropdown();
+
+            _actions = new DroneControlsActions();
+            _actions.Lobby.ToggleReady.performed += OnToggleReadyPerformed;
+        }
+
+        private void OnEnable()
+        {
+            _actions?.Lobby.Enable();
+        }
+
+        private void OnDisable()
+        {
+            _actions?.Lobby.Disable();
+        }
+
+        private void OnDestroy()
+        {
+            _actions.Lobby.ToggleReady.performed -= OnToggleReadyPerformed;
+            _actions.Dispose();
+        }
+
+        private void OnToggleReadyPerformed(InputAction.CallbackContext context)
+        {
+            OnReadyClicked();
         }
 
         private void Update()
@@ -123,9 +151,27 @@ namespace DroneSport.UI
         private static void OnReadyClicked()
         {
             DroneSportRoomPlayer roomPlayer = GetLocalRoomPlayer();
-            if (roomPlayer != null)
+            if (roomPlayer != null && roomPlayer.Team.HasValue)
             {
                 roomPlayer.CmdChangeReadyState(!roomPlayer.readyToBegin);
+            }
+        }
+
+        private static void OnExitLobbyClicked()
+        {
+            NetworkManager manager = NetworkManager.singleton;
+
+            if (NetworkServer.active && NetworkClient.isConnected)
+            {
+                manager.StopHost();
+            }
+            else if (NetworkClient.isConnected)
+            {
+                manager.StopClient();
+            }
+            else if (NetworkServer.active)
+            {
+                manager.StopServer();
             }
         }
 

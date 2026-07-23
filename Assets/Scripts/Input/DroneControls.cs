@@ -171,7 +171,7 @@ public partial class @DroneControlsActions: IInputActionCollection2, IDisposable
                 {
                     ""name"": ""Keyboard"",
                     ""id"": ""cb144424-aeb1-426e-a5cf-d06d508a51c5"",
-                    ""path"": ""Axis(minValue=0,maxValue=1)"",
+                    ""path"": ""Axis"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
@@ -444,6 +444,56 @@ public partial class @DroneControlsActions: IInputActionCollection2, IDisposable
                     ""isPartOfComposite"": false
                 }
             ]
+        },
+        {
+            ""name"": ""Lobby"",
+            ""id"": ""ae70e674-0406-4268-8ccd-6dc2f14c9d25"",
+            ""actions"": [
+                {
+                    ""name"": ""ToggleReady"",
+                    ""type"": ""Button"",
+                    ""id"": ""165428c3-9d3a-4a8f-80b2-1d26e24a8b52"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": ""Press"",
+                    ""initialStateCheck"": false
+                }
+            ],
+            ""bindings"": [
+                {
+                    ""name"": """",
+                    ""id"": ""d60e94a1-de80-4310-adf1-affbd00c706e"",
+                    ""path"": ""<Gamepad>/buttonSouth"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""Gamepad"",
+                    ""action"": ""ToggleReady"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""9613307a-7176-4154-8916-20d6f3592ea1"",
+                    ""path"": ""<Joystick>/trigger"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""ToggleReady"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""d4a5fc77-0307-4463-8fa9-15a579b65870"",
+                    ""path"": ""<Keyboard>/space"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""Keyboard"",
+                    ""action"": ""ToggleReady"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                }
+            ]
         }
     ],
     ""controlSchemes"": [
@@ -480,11 +530,15 @@ public partial class @DroneControlsActions: IInputActionCollection2, IDisposable
         m_Drone_Arm = m_Drone.FindAction("Arm", throwIfNotFound: true);
         m_Drone_ArmSwitch = m_Drone.FindAction("ArmSwitch", throwIfNotFound: true);
         m_Drone_SelfRight = m_Drone.FindAction("SelfRight", throwIfNotFound: true);
+        // Lobby
+        m_Lobby = asset.FindActionMap("Lobby", throwIfNotFound: true);
+        m_Lobby_ToggleReady = m_Lobby.FindAction("ToggleReady", throwIfNotFound: true);
     }
 
     ~@DroneControlsActions()
     {
         UnityEngine.Debug.Assert(!m_Drone.enabled, "This will cause a leak and performance issues, DroneControlsActions.Drone.Disable() has not been called.");
+        UnityEngine.Debug.Assert(!m_Lobby.enabled, "This will cause a leak and performance issues, DroneControlsActions.Lobby.Disable() has not been called.");
     }
 
     /// <summary>
@@ -718,6 +772,102 @@ public partial class @DroneControlsActions: IInputActionCollection2, IDisposable
     /// Provides a new <see cref="DroneActions" /> instance referencing this action map.
     /// </summary>
     public DroneActions @Drone => new DroneActions(this);
+
+    // Lobby
+    private readonly InputActionMap m_Lobby;
+    private List<ILobbyActions> m_LobbyActionsCallbackInterfaces = new List<ILobbyActions>();
+    private readonly InputAction m_Lobby_ToggleReady;
+    /// <summary>
+    /// Provides access to input actions defined in input action map "Lobby".
+    /// </summary>
+    public struct LobbyActions
+    {
+        private @DroneControlsActions m_Wrapper;
+
+        /// <summary>
+        /// Construct a new instance of the input action map wrapper class.
+        /// </summary>
+        public LobbyActions(@DroneControlsActions wrapper) { m_Wrapper = wrapper; }
+        /// <summary>
+        /// Provides access to the underlying input action "Lobby/ToggleReady".
+        /// </summary>
+        public InputAction @ToggleReady => m_Wrapper.m_Lobby_ToggleReady;
+        /// <summary>
+        /// Provides access to the underlying input action map instance.
+        /// </summary>
+        public InputActionMap Get() { return m_Wrapper.m_Lobby; }
+        /// <inheritdoc cref="UnityEngine.InputSystem.InputActionMap.Enable()" />
+        public void Enable() { Get().Enable(); }
+        /// <inheritdoc cref="UnityEngine.InputSystem.InputActionMap.Disable()" />
+        public void Disable() { Get().Disable(); }
+        /// <inheritdoc cref="UnityEngine.InputSystem.InputActionMap.enabled" />
+        public bool enabled => Get().enabled;
+        /// <summary>
+        /// Implicitly converts an <see ref="LobbyActions" /> to an <see ref="InputActionMap" /> instance.
+        /// </summary>
+        public static implicit operator InputActionMap(LobbyActions set) { return set.Get(); }
+        /// <summary>
+        /// Adds <see cref="InputAction.started"/>, <see cref="InputAction.performed"/> and <see cref="InputAction.canceled"/> callbacks provided via <param cref="instance" /> on all input actions contained in this map.
+        /// </summary>
+        /// <param name="instance">Callback instance.</param>
+        /// <remarks>
+        /// If <paramref name="instance" /> is <c>null</c> or <paramref name="instance"/> have already been added this method does nothing.
+        /// </remarks>
+        /// <seealso cref="LobbyActions" />
+        public void AddCallbacks(ILobbyActions instance)
+        {
+            if (instance == null || m_Wrapper.m_LobbyActionsCallbackInterfaces.Contains(instance)) return;
+            m_Wrapper.m_LobbyActionsCallbackInterfaces.Add(instance);
+            @ToggleReady.started += instance.OnToggleReady;
+            @ToggleReady.performed += instance.OnToggleReady;
+            @ToggleReady.canceled += instance.OnToggleReady;
+        }
+
+        /// <summary>
+        /// Removes <see cref="InputAction.started"/>, <see cref="InputAction.performed"/> and <see cref="InputAction.canceled"/> callbacks provided via <param cref="instance" /> on all input actions contained in this map.
+        /// </summary>
+        /// <remarks>
+        /// Calling this method when <paramref name="instance" /> have not previously been registered has no side-effects.
+        /// </remarks>
+        /// <seealso cref="LobbyActions" />
+        private void UnregisterCallbacks(ILobbyActions instance)
+        {
+            @ToggleReady.started -= instance.OnToggleReady;
+            @ToggleReady.performed -= instance.OnToggleReady;
+            @ToggleReady.canceled -= instance.OnToggleReady;
+        }
+
+        /// <summary>
+        /// Unregisters <param cref="instance" /> and unregisters all input action callbacks via <see cref="LobbyActions.UnregisterCallbacks(ILobbyActions)" />.
+        /// </summary>
+        /// <seealso cref="LobbyActions.UnregisterCallbacks(ILobbyActions)" />
+        public void RemoveCallbacks(ILobbyActions instance)
+        {
+            if (m_Wrapper.m_LobbyActionsCallbackInterfaces.Remove(instance))
+                UnregisterCallbacks(instance);
+        }
+
+        /// <summary>
+        /// Replaces all existing callback instances and previously registered input action callbacks associated with them with callbacks provided via <param cref="instance" />.
+        /// </summary>
+        /// <remarks>
+        /// If <paramref name="instance" /> is <c>null</c>, calling this method will only unregister all existing callbacks but not register any new callbacks.
+        /// </remarks>
+        /// <seealso cref="LobbyActions.AddCallbacks(ILobbyActions)" />
+        /// <seealso cref="LobbyActions.RemoveCallbacks(ILobbyActions)" />
+        /// <seealso cref="LobbyActions.UnregisterCallbacks(ILobbyActions)" />
+        public void SetCallbacks(ILobbyActions instance)
+        {
+            foreach (var item in m_Wrapper.m_LobbyActionsCallbackInterfaces)
+                UnregisterCallbacks(item);
+            m_Wrapper.m_LobbyActionsCallbackInterfaces.Clear();
+            AddCallbacks(instance);
+        }
+    }
+    /// <summary>
+    /// Provides a new <see cref="LobbyActions" /> instance referencing this action map.
+    /// </summary>
+    public LobbyActions @Lobby => new LobbyActions(this);
     private int m_GamepadSchemeIndex = -1;
     /// <summary>
     /// Provides access to the input control scheme.
@@ -800,5 +950,20 @@ public partial class @DroneControlsActions: IInputActionCollection2, IDisposable
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
         void OnSelfRight(InputAction.CallbackContext context);
+    }
+    /// <summary>
+    /// Interface to implement callback methods for all input action callbacks associated with input actions defined by "Lobby" which allows adding and removing callbacks.
+    /// </summary>
+    /// <seealso cref="LobbyActions.AddCallbacks(ILobbyActions)" />
+    /// <seealso cref="LobbyActions.RemoveCallbacks(ILobbyActions)" />
+    public interface ILobbyActions
+    {
+        /// <summary>
+        /// Method invoked when associated input action "ToggleReady" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnToggleReady(InputAction.CallbackContext context);
     }
 }
