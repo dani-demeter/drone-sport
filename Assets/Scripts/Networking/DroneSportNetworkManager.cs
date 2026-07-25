@@ -15,6 +15,8 @@ namespace DroneSport.Networking
 
         public IReadOnlyList<MapOption> AvailableMaps => availableMaps;
 
+        public float SelectedMatchDurationSeconds { get; private set; } = MatchLengthSelection.DefaultDurationSeconds;
+
         public override bool OnRoomServerSceneLoadedForPlayer(NetworkConnectionToClient conn, GameObject roomPlayer, GameObject gamePlayer)
         {
             DroneSportRoomPlayer droneRoomPlayer = roomPlayer.GetComponent<DroneSportRoomPlayer>();
@@ -55,6 +57,9 @@ namespace DroneSport.Networking
         public void ServerCompleteCountdownAndStartMatch()
         {
             GameplayScene = ResolveSelectedMapScenePath();
+            SelectedMatchDurationSeconds = MatchLengthSelection.Instance != null
+                ? MatchLengthSelection.Instance.SelectedDurationSeconds
+                : MatchLengthSelection.DefaultDurationSeconds;
             ServerChangeScene(GameplayScene);
         }
 

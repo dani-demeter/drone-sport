@@ -37,6 +37,17 @@ namespace DroneSport.Networking
         }
 
         [Command]
+        public void CmdSelectMatchLength(float durationSeconds)
+        {
+            if (connectionToClient != NetworkServer.localConnection)
+            {
+                return;
+            }
+
+            MatchLengthSelection.Instance?.ServerSetSelectedDuration(durationSeconds);
+        }
+
+        [Command]
         private void CmdSetPlayerName(string newName)
         {
             newName = newName?.Trim();

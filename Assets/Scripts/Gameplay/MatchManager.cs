@@ -33,6 +33,12 @@ namespace DroneSport.Gameplay
         private void Awake()
         {
             Instance = this;
+
+            if (NetworkManager.singleton is DroneSportNetworkManager roomManager)
+            {
+                matchDurationSeconds = roomManager.SelectedMatchDurationSeconds;
+            }
+
             _clock = new MatchClock(matchDurationSeconds);
             syncedRemainingSeconds = matchDurationSeconds;
             Debug.Log($"[MatchManager] Match started ({matchDurationSeconds:0}s)");

@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using DroneSport.Gameplay;
@@ -30,6 +31,11 @@ namespace DroneSport.UI
         [Header("Map Selection")]
         [SerializeField] private TMP_Dropdown mapDropdown;
 
+        [Header("Match Length")]
+        [SerializeField] private TMP_Dropdown matchLengthDropdown;
+
+        private static readonly float[] MatchLengthOptionsSeconds = { 60f, 180f, 300f };
+
         private readonly Dictionary<DroneSportRoomPlayer, RosterRow> _rows = new();
         private DroneControlsActions _actions;
 
@@ -41,6 +47,9 @@ namespace DroneSport.UI
             exitLobbyButton.onClick.AddListener(OnExitLobbyClicked);
             mapDropdown.onValueChanged.AddListener(OnMapSelected);
             PopulateMapDropdown();
+
+            matchLengthDropdown.onValueChanged.AddListener(OnMatchLengthSelected);
+            PopulateMatchLengthDropdown();
 
             _actions = new DroneControlsActions();
             _actions.Lobby.ToggleReady.performed += OnToggleReadyPerformed;
@@ -77,6 +86,7 @@ namespace DroneSport.UI
             UpdateRoster();
             UpdateCountdown();
             UpdateMapSelection();
+            UpdateMatchLengthSelection();
         }
 
         private void PopulateMapDropdown()
@@ -100,6 +110,31 @@ namespace DroneSport.UI
         private static void OnMapSelected(int index)
         {
             GetLocalRoomPlayer()?.CmdSelectMap(index);
+        }
+
+        private void PopulateMatchLengthDropdown()
+        {
+            matchLengthDropdown.ClearOptions();
+            matchLengthDropdown.AddOptions(new List<string> { "1 Minute", "3 Minutes", "5 Minutes" });
+        }
+
+        private void UpdateMatchLengthSelection()
+        {
+            matchLengthDropdown.interactable = NetworkServer.active;
+
+            float selectedSeconds = MatchLengthSelection.Instance != null
+                ? MatchLengthSelection.Instance.SelectedDurationSeconds
+                : MatchLengthSelection.DefaultDurationSeconds;
+            int selectedIndex = Mathf.Max(0, Array.IndexOf(MatchLengthOptionsSeconds, selectedSeconds));
+            if (matchLengthDropdown.value != selectedIndex)
+            {
+                matchLengthDropdown.SetValueWithoutNotify(selectedIndex);
+            }
+        }
+
+        private static void OnMatchLengthSelected(int index)
+        {
+            GetLocalRoomPlayer()?.CmdSelectMatchLength(MatchLengthOptionsSeconds[index]);
         }
 
         private void UpdateCountdown()
