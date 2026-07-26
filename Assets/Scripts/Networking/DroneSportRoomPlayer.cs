@@ -9,9 +9,11 @@ namespace DroneSport.Networking
         private const int MaxPlayerNameLength = 24;
 
         [SyncVar] private int teamRaw = -1;
+        [SyncVar] private int teamSlotIndex;
         [SyncVar] private string playerName = "Player";
 
         public TeamId? Team => teamRaw < 0 ? null : (TeamId)teamRaw;
+        public int TeamSlotIndex => teamSlotIndex;
         public string PlayerName => playerName;
 
         public override void OnStartAuthority()
@@ -23,6 +25,21 @@ namespace DroneSport.Networking
         public void CmdSetTeam(TeamId newTeam)
         {
             teamRaw = (int)newTeam;
+
+            if (NetworkManager.singleton is DroneSportNetworkManager roomManager)
+            {
+                roomManager.ServerRecomputeTeamSlots();
+            }
+        }
+
+        public void SetTeamSlotIndexServerSide(int slotIndex)
+        {
+            if (!NetworkServer.active)
+            {
+                return;
+            }
+
+            teamSlotIndex = slotIndex;
         }
 
         [Command]

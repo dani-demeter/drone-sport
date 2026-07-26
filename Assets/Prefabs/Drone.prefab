@@ -169,7 +169,7 @@ MonoBehaviour:
   syncInterval: 0
   droneTeam: {fileID: 232086723266450537}
   trail: {fileID: 7039851511997843686}
-  hueJitterRange: 0.06
+  palette: {fileID: 11400000, guid: 92f405f4d3596b446b4b7bb08efabcba, type: 2}
 --- !u!1 &8711407927438738790
 GameObject:
   m_ObjectHideFlags: 0
@@ -303,6 +303,7 @@ MonoBehaviour:
   debugHud: {fileID: 4089744327771134284}
   playerCamera: {fileID: 4444398920497805837}
   selfRightLiftMeters: 0.15
+  armThrottleSafetyThreshold: 0.05
 --- !u!114 &4089744327771134284
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -24,10 +24,33 @@ namespace DroneSport.Networking
 
             if (droneRoomPlayer != null && droneTeam != null)
             {
-                droneTeam.SetTeamServerSide(droneRoomPlayer.Team ?? TeamId.A);
+                droneTeam.SetTeamServerSide(droneRoomPlayer.Team ?? TeamId.A, droneRoomPlayer.TeamSlotIndex);
             }
 
             return true;
+        }
+
+        public override void OnRoomServerDisconnect(NetworkConnectionToClient conn)
+        {
+            base.OnRoomServerDisconnect(conn);
+            ServerRecomputeTeamSlots();
+        }
+
+        public void ServerRecomputeTeamSlots()
+        {
+            int nextSlotForTeamA = 0;
+            int nextSlotForTeamB = 0;
+
+            foreach (NetworkRoomPlayer slot in roomSlots)
+            {
+                if (slot is not DroneSportRoomPlayer roomPlayer || !roomPlayer.Team.HasValue)
+                {
+                    continue;
+                }
+
+                int slotIndex = roomPlayer.Team.Value == TeamId.A ? nextSlotForTeamA++ : nextSlotForTeamB++;
+                roomPlayer.SetTeamSlotIndexServerSide(slotIndex);
+            }
         }
 
         public override GameObject OnRoomServerCreateGamePlayer(NetworkConnectionToClient conn, GameObject roomPlayer)
